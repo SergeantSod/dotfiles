@@ -1,11 +1,21 @@
 #!/bin/bash
 
+#
+# Manages dotfiles by putting them in a bare git repo.
+# This command is just a wrapper around git that uses this bare git repo and
+# uses the home directory as the working tree.
+#
+
 REPO_PATH="$HOME/.dotfiles_stash"
 
+# Invokes git with the right repo forwarding all commands and arguments
 function git_command(){
   git --git-dir="$REPO_PATH" --work-tree="$HOME" "$@"
 }
 
+# Sets up a bare repo and configures it to ignore untracked files, since
+# the typical home directory contains a loooooot of files you don't want to
+# version.
 function setup() {
   git init --bare "$REPO_PATH"
   git_command config status.showUntrackedFiles no
