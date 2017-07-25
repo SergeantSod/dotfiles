@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+def suspend
+  `lock-and-suspend`
+end
+
+def exit
+  `i3-msg exit`
+end
+
+def shutdown
+  `systemctl poweroff`
+end
+
+
+def show_menu(title, text, column_title, selections={})
+  IO.popen("zenity --list --title \"#{title}\" --text \"#{text}\" --column \"#{column_title}\"", 'r+') do |io|
+    selections.keys.each do |name|
+      io.puts name
+    end
+    io.close_write
+    selected = io.gets
+    if selected && selected.chomp!
+      selections[selected].call
+    end
+  end
+end
+
+show_menu("Quit?",
+  "Choose an Action...",
+  "Action",
+  "Lock and Suspend" => method(:suspend),
+  "Exit to Login screen" => method(:exit),
+  "Shut down system" => method(:shutdown)
+)
