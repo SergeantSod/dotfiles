@@ -2,7 +2,7 @@
 dnf check-update > /dev/null
 if [ $? -eq 100 ]
 then
-  echo "<img>/usr/share/icons/matefaenza/actions/16/package-upgrade.png</img><tool>Package upgrades available.</tool><click>gpk-update-viewer</click>"
+  echo "<img>/usr/share/icons/matefaenza/actions/16/package-upgrade.png</img><tool>Package upgrades available.</tool><click>yumex-dnf</click>"
 else
   echo "<img>/usr/share/icons/matefaenza/actions/24/package-install.png</img><tool>Packages are up to date.</tool>"
 fi
