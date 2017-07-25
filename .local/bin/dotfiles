@@ -1,0 +1,20 @@
+#!/bin/bash
+
+REPO_PATH="$HOME/.dotfiles_stash"
+
+function git_command(){
+  git --git-dir="$REPO_PATH" --work-tree="$HOME" "$@"
+}
+
+function setup() {
+  git init --bare "$REPO_PATH"
+  git_command config status.showUntrackedFiles no
+}
+
+case "$1" in
+  setup)
+    setup
+    ;;
+  *)
+    git_command "$@"
+esac
