@@ -152,14 +152,6 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-# Autostart
-exec --no-startup-id nitrogen --restore
-exec --no-startup-id xfsettingsd
-exec --no-startup-id tint2
-exec --no-startup-id nm-applet
-exec --no-startup-id compton
-exec --no-startup-id /usr/libexec/xfce-polkit
-
 #Mouse bindings
 bindsym --release button3 kill
 bindsym button4 move left
@@ -170,7 +162,6 @@ client.focused #0088CC #0088CC #ffffff #dddddd
 client.focused_inactive #333333 #333333 #888888 #292d2e
 client.unfocused #333333 #333333 #888888 #292d2e
 client.urgent #2f343a #900000 #ffffff #900000
-
 
 for_window [class=".*"] title_format "   %title"
 workspace_layout stacking
