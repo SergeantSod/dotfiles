@@ -156,6 +156,9 @@ bindsym $mod+r mode "resize"
 bindsym --release button3 kill
 bindsym button4 move left
 bindsym button5 move right
+bindsym Shift+button4 move up
+bindsym Shift+button5 move down
+
 
 # Color theme
 
