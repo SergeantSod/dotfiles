@@ -8,10 +8,6 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map as Map
 import qualified Data.Maybe as Maybe
 
-import qualified DBus as D
-import qualified DBus.Client as D
-import qualified Codec.Binary.UTF8.String as UTF8
-
 import XMonad hiding ( (|||) )
 
 import XMonad.Hooks.DynamicLog
@@ -35,7 +31,6 @@ import XMonad.Layout.LayoutCombinators ((|||))
 import qualified XMonad.Layout.ToggleLayouts as ToggleLayouts
 import qualified XMonad.Layout.NoBorders as NoBorders
 import qualified XMonad.Layout.Spacing as Spacing
-import qualified XMonad.Layout.Renamed as Renamed
 
 import XMonad.Config.Xfce
 import XMonad.Util.EZConfig
@@ -49,18 +44,16 @@ myLayoutModifiers = avoidStruts .
                     maximize .
                     withGaps
     where withGaps = Spacing.spacing 3
-          cleanDescription = Renamed.renamed [Renamed.CutWordsLeft 1]
           maximize = ToggleLayouts.toggleLayouts $ NoBorders.noBorders Full
 
 myLayout = tall ||| wide ||| recursive ||| grid ||| big
     where
-     named name = Renamed.renamed [Renamed.Replace name]
      delta      = 1/12
-     wide       = named "Wide" $ Mirror $ Tall 2 delta (2/3)
-     tall       = named "Tall" $ Tall 1 delta (1/2)
-     recursive  = named "Recursive" $ Recursive False (1/2) (delta/2)
-     grid       = named "Grid" $ Mirror $ Grid (1/1.6)
-     big        = named "Big" $ OneBig (2/3) (2/3)
+     wide       = Mirror $ Tall 2 delta (2/3)
+     tall       = Tall 1 delta (1/2)
+     recursive  = Recursive False (1/2) (delta/2)
+     grid       = Mirror $ Grid (1/1.6)
+     big        = OneBig (2/3) (2/3)
 
 myWorkspaces    = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
@@ -135,7 +128,7 @@ myMouseBindings conf =
       ]
 
 -- myServerHook::(XConfig Layout) -> Event -> X All
-myServerHook = serverModeEventHook' cmds
+serverMode = serverModeEventHook' cmds
     where cmds = do conf <- asks config
                     return $ myNormalKeyMap conf
 
@@ -152,7 +145,6 @@ myManageHook = baseHook <+>
                         className  =? "Do"  --> doIgnore,
                         className  =? "Notification-daemon" --> doSideFloat SW,
                         className  =? "Xfce4-notifyd" --> doIgnore,
-                        className  =? "Geary" --> doShift (last myWorkspaces),
 			                  title =? "Whisker Menu" --> doFloat
                       ]
 
@@ -168,7 +160,7 @@ myConfig =
                         borderWidth = 1,
                         modMask = mod4Mask,
                         focusFollowsMouse = True,
-                        handleEventHook = mconcat [myServerHook],
+                        handleEventHook = serverMode,
                         manageHook = myManageHook,
                         keys = allKeys [myNormalKeys,myWorkspaceKeys,(keys xfceConfig)],
                         layoutHook  = myLayoutModifiers (myLayout),
@@ -176,52 +168,6 @@ myConfig =
                         mouseBindings = myMouseBindings
                       }
 
-withDBusLogging xmonadMain config = do
-  dbus <- D.connectSession
-  getWellKnownName dbus
-  let modifiedConfig = config { logHook = extendedLogHook }
-      extendedLogHook = (logHook config) <+> dynamicLogWithPP (prettyPrinter dbus)
-  xmonadMain $ modifiedConfig
-
-getWellKnownName :: D.Client -> IO ()
-getWellKnownName dbus = do
-  D.requestName dbus (D.busName_ "org.xmonad.Log")
-                [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
-  return ()
-
-dbusOutput :: D.Client -> String -> IO ()
-dbusOutput dbus str = do
-    let signal = (D.signal "/org/xmonad/Log" "org.xmonad.Log" "Update") {
-            D.signalBody = [D.toVariant $ UTF8.decodeString str]
-        }
-    D.emit dbus signal
-
-prettyPrinter :: D.Client -> PP
-prettyPrinter dbus = defaultPP
-    { ppOutput   = dbusOutput dbus
-    , ppTitle    = escaped
-    , ppCurrent  = omit
-    , ppVisible  = omit
-    , ppHidden   = omit
-    , ppUrgent   = omit
-    , ppLayout   = tagged "u"
-    , ppSep      = " ‣ "
-    }
-
-omit = const ""
-
-tagged:: String -> String -> String
-tagged tag text = "<" ++ tag ++ ">" ++ text ++ "</" ++ tag ++ ">"
-
-escaped :: String -> String
-escaped = foldr sanitize ""
-  where
-    sanitize '>'  xs = "&gt;" ++ xs
-    sanitize '<'  xs = "&lt;" ++ xs
-    sanitize '\"' xs = "&quot;" ++ xs
-    sanitize '&'  xs = "&amp;" ++ xs
-    sanitize x    xs = x:xs
-
 main::IO()
 main = do
-    xmonad `withDBusLogging` myConfig
+    xmonad myConfig
