@@ -1,2 +1,2 @@
 #!/bin/sh
-i3lock& systemctl suspend
+light-locker-command --lock && systemctl suspend

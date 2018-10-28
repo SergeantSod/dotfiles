@@ -156,16 +156,16 @@ bindsym $mod+r mode "resize"
 bindsym --release button3 kill
 bindsym button4 move left
 bindsym button5 move right
-bindsym Shift+button4 move up
-bindsym Shift+button5 move down
 
 
 # Color theme
 
 for_window [class=".*"] title_format "   %title"
 workspace_layout stacking
+#
+#
 
-client.focused #dd4814 #dd4814 #ffffff #902a07
-#client.focused_inactive #5e2750 #5e2750 #aea79f #5e2750
-#client.unfocused #5e2750 #5e2750 #aea79f #5e2750
-client.urgent #77216f #77216f #ffffff #efb73e
+client.focused #4c7899 #285577 #ffffff #2e9ef4
+client.focused_inactive #333333 #5f676a #ffffff #484e50
+client.unfocused #333333 #222222 #888888 #292d2e
+client.urgent #2f343a #900000 #ffffff #900000

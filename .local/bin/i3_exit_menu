@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
 def suspend
-  `lock-and-suspend`
+  `xfce4-session-logout -s`
 end
 
 def exit
-  `i3-msg exit`
+  `xfce4-session-logout -l`
 end
 
 def shutdown
-  `systemctl poweroff`
+  `xfce4-session-logout -h`
 end
 
 

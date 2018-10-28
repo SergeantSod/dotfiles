@@ -19,29 +19,32 @@ class LogAppletProxy(dbus.service.Object):
         pass
 
 
-def i3_event_loop(log_applet):
+def i3_event_loop(log_applet, gobject_main_loop):
 
     def on_window_focus(i3, event):
         log_applet.Update(event.container.name)
-
-    print("connecting to i3.")
-    i3 = i3ipc.Connection()
-    i3.on("window::focus", on_window_focus)
-    i3.main()
+    try:
+        print("connecting to i3.")
+        i3 = i3ipc.Connection()
+        i3.on("window::focus", on_window_focus)
+        i3.main()
+    finally:
+        gobject_main_loop.quit()
 
 
 
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+    gobject.threads_init()
+    dbus.mainloop.glib.threads_init()
 
     session_bus = dbus.SessionBus()
     name = dbus.service.BusName('org.xmonad.Log', session_bus)
     log_applet = LogAppletProxy(session_bus)
 
-    thread.start_new_thread(i3_event_loop, (log_applet,))
+    gobject_main_loop = gobject.MainLoop()
 
-    gobject.threads_init()
-    dbus.mainloop.glib.threads_init()
-    loop = gobject.MainLoop()
+    thread.start_new_thread(i3_event_loop, (log_applet, gobject_main_loop))
+
     print "Running example signal emitter service."
-    loop.run()
+    gobject_main_loop.run()
