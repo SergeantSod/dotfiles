@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=compton
+Hidden=false
+X-MATE-Autostart-enabled=true
+Name=Compton Compositor
+Comment=
+X-GNOME-Autostart-enabled=false
+
