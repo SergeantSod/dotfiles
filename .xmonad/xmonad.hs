@@ -1,21 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import Data.Monoid
-import System.IO
-import Control.Monad (liftM,liftM2)
-import Data.List(delete)
 import qualified XMonad.StackSet as W
 import qualified Data.Map as Map
-import qualified Data.Maybe as Maybe
 
 import XMonad hiding ( (|||) )
 
-import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.ServerMode
-import XMonad.ManageHook
 import qualified XMonad.Hooks.InsertPosition as IP
 
 import XMonad.Actions.CycleWS
@@ -145,7 +138,7 @@ myManageHook = baseHook <+>
                         className  =? "Do"  --> doIgnore,
                         className  =? "Notification-daemon" --> doSideFloat SW,
                         className  =? "Xfce4-notifyd" --> doIgnore,
-			                  title =? "Whisker Menu" --> doFloat
+                        title =? "Whisker Menu" --> doFloat
                       ]
 
 activeWindowBorderColor="#5D97D3"
