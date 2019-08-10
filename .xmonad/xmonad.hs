@@ -117,7 +117,10 @@ myMouseBindings conf =
         ((myModMask, button4),                 const $ windows W.swapUp),
         ((myModMask, button5),                 const $ windows W.swapDown),
         ((myModMask .|. shiftMask, button4),   const $ sendMessage Expand),
-        ((myModMask .|. shiftMask, button5),   const $ sendMessage Shrink)
+        ((myModMask .|. shiftMask, button5),   const $ sendMessage Shrink),
+        -- extra mouse buttons:
+        ((noModMask,8),                        const $ windows W.swapMaster),
+        ((noModMask,9),                        killWindow)        
       ]
 
 -- myServerHook::(XConfig Layout) -> Event -> X All
